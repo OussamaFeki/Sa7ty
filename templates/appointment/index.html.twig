@@ -186,7 +186,8 @@
         <h2> Dr Marie-Eve CAUCHON-RAULT</h2>
         <h4>Médecin généraliste</h4>
         <p>Consultation vidéo disponible</p>
-        <button id="visit{{ x }}" class="visit">PRENDRE RENDEZ-VOUS</button>
+        <a id="visit{{ x }}" class="visit" href="{{ path('app_appointment_new') }}">PRENDRE RENDEZ-VOUS</a>
+        
       </div>
       <div id="calond{{ x }}" class="calond">
         <div id="table{{ x }}" class="table">

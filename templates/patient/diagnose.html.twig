@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Diagnose - {{ patient.fullName }}{% endblock %}
+
+{% block body %}
+<div class="chat-container">
+    <div class="chat-box">
+        <h2>Chat with our Diagnosis API</h2>
+        <div class="messages">
+            {% for flash_message in app.flashes('api_error') %}
+                <div class="alert alert-danger">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+            {% for result in results %}
+                <div class="message api">
+                    <p><strong>Disease:</strong> {{ result.disease }}</p>
+                    <p><strong>Description:</strong> {{ result.description }}</p>
+                    <p><strong>Precautions:</strong></p>
+                    <ul>
+                        {% if result.precautions is iterable %}
+                            {% for precaution in result.precautions %}
+                                <li>{{ precaution }}</li>
+                            {% endfor %}
+                        {% else %}
+                            <li>{{ result.precautions }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <form id="symptomsForm" action="{{ path('app_patient_diagnose', {'id': patient.id}) }}" method="POST" class="input-box">
+        <input type="text" name="symptoms" id="symptomsInput" placeholder="Enter your symptoms separated by a comma (e.g., cough, fever, headache)" required>
+        <button type="submit">Send</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block addstylesheets %}
+<style>
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+    .chat-box {
+        width: 80%;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+    .messages {
+        height: 300px;
+        overflow-y: scroll;
+        background-color: #e9e9e9;
+        padding: 5px;
+    }
+    .message {
+        padding: 5px;
+        border-radius: 10px;
+        margin: 5px;
+        color: black;
+        background-color: #4caf50; /* API messages */
+        text-align: left;
+    }
+    .input-box {
+        width: 80%;
+        display: flex;
+    }
+    .input-box input {
+        flex: 1;
+        padding: 10px;
+        margin-right: 5px;
+    }
+    .input-box button {
+        padding: 10px 20px;
+    }
+    .alert {
+        padding: 10px;
+        background-color: #f44336; /* Red */
+        color: white;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.getElementById('symptomsForm').addEventListener('submit', function(event) {
+        var input = document.getElementById('symptomsInput');
+        if (input.value.trim() === '') {
+            alert('Please enter some symptoms before submitting.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+</script>
+{% endblock %}

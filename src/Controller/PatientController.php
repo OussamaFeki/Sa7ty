@@ -51,7 +51,7 @@ class PatientController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/diagnose', name: 'app_patient_diagnose', methods: ['GET', 'POST'])]
+    #[Route('/diagnose', name: 'app_patient_diagnose', methods: ['GET', 'POST'])]
     public function diagnoseSymptoms(Patient $patient, Request $request): Response
     {
         $results = [];  // Initialize results as an empty array

@@ -96,6 +96,10 @@
 						<ul>
 							{% if app.user %}
 								{% if app.user.patient %}
+								<li>
+										<a href="{{ path('app_patient_diagnose')}}">DocBot</a>
+
+									</li>
 									<li>
 										<a href="{{ path('app_doctor_index')}}">Doctors</a>
 
@@ -176,6 +180,10 @@
 										<ul>
 											{% if app.user %}
 												{% if app.user.patient %}
+													<li>
+														<a href="{{ path('app_patient_diagnose')}}">DocBot</a>
+
+													</li>
 													<li>
 														<a href="{{ path('app_doctor_index')}}">Doctors</a>
 

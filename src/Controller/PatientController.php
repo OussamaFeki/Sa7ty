@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Patient;
+use App\Form\DiagnosticType;
 use App\Form\PatientType;
 use App\Service\ApiService;
 use App\Repository\PatientRepository;
@@ -55,22 +56,29 @@ class PatientController extends AbstractController
     public function diagnoseSymptoms(Patient $patient, Request $request): Response
     {
         $results = [];  // Initialize results as an empty array
-    
-        if ($request->isMethod('POST')) {
-            $symptoms = $request->request->get('symptoms');
-    
+
+        // Create the form
+        $form = $this->createForm(DiagnosticType::class);
+
+        // Handle form submission
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $symptoms = $form->get('symptoms')->getData();
+
             if (empty($symptoms)) {
-                $this->addFlash('api_error', 'Please enter some symptoms.');
+                $this->addFlash('api_error', 'Please select some symptoms.');
                 return $this->redirectToRoute('app_patient_diagnose', ['id' => $patient->getId()]);
             }
-    
-            $symptomsArray = explode(',', $symptoms);
-            $results = $this->apiService->getDiseasesBySymptoms($symptomsArray);
+
+            // Process symptoms data and fetch results from the API
+            $results = $this->apiService->getDiseasesBySymptoms($symptoms);
         }
-    
-        // Always pass 'results' to the template, either empty or filled based on POST request
+
+        // Pass the form and results to the template
         return $this->render('patient/diagnose.html.twig', [
             'patient' => $patient,
+            'form' => $form->createView(),
             'results' => $results
         ]);
     }

@@ -30,14 +30,17 @@
             {% endfor %}
         </div>
     </div>
-    <form id="symptomsForm" action="{{ path('app_patient_diagnose', {'id': patient.id}) }}" method="POST" class="input-box">
-        <input type="text" name="symptoms" id="symptomsInput" placeholder="Enter your symptoms separated by a comma (e.g., cough, fever, headache)" required>
-        <button type="submit">Send</button>
-    </form>
+    {{ form_start(form, { 'attr': { 'class': 'input-box' } }) }}
+    {{ form_errors(form.symptoms) }}
+    {{ form_widget(form.symptoms, { 'attr': { 'class': 'form-control', 'multiple': 'multiple' } }) }}
+    <button type="submit">Send</button>
+    {{ form_end(form) }}
 </div>
 {% endblock %}
 
 {% block addstylesheets %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.0.1/dist/css/multi-select-tag.css">
 <style>
     .chat-container {
         display: flex;
@@ -97,4 +100,9 @@
         }
     });
 </script>
+<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.0.1/dist/js/multi-select-tag.js"></script>
+<script>
+    new MultiSelectTag('countries')  // id
+</script>
+
 {% endblock %}

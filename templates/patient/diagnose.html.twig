@@ -30,11 +30,17 @@
             {% endfor %}
         </div>
     </div>
-    {{ form_start(form, { 'attr': { 'class': 'input-box' } }) }}
-    {{ form_errors(form.symptoms) }}
-    {{ form_widget(form.symptoms, { 'attr': { 'class': 'form-control', 'multiple': 'multiple' } }) }}
-    <button type="submit">Send</button>
-    {{ form_end(form) }}
+{{ form_start(form, { 'attr': { 'class': 'input-box' } }) }}
+{{ form_errors(form.symptoms) }}
+<select id="countries" name="{{ form.symptoms.vars.full_name }}[]" class="form-control" multiple="multiple">
+    {% for choice in form.symptoms.vars.choices %}
+        <option value="{{ choice.value }}">{{ choice.label }}</option>
+    {% endfor %}
+</select>
+<button type="submit">Send</button>
+{{ form_end(form) }}
+
+
 </div>
 {% endblock %}
 

@@ -178,6 +178,37 @@
 
     <a href="{{ path('app_appointment_new') }}">Create new</a> #}
     
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Hour</th>
+                <th>PatientStatus</th>
+                <th>Progress</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.id }}</td>
+                <td>{{ appointment.date }}</td>
+                <td>{{ appointment.hour }}</td>
+                <td>{{ appointment.patientStatus ? 'Yes' : 'No' }}</td>
+                <td>{{ appointment.progress }}</td>
+                <td>
+                    <a href="{{ path('app_appointment_show', {'id': appointment.id}) }}">show</a>
+                    <a href="{{ path('app_appointment_edit', {'id': appointment.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% for x in range(1,10) %}
 
   <div class="card">

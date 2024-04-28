@@ -18,24 +18,27 @@ class DiagnosticType extends AbstractType
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
-{
-    // Fetch symptoms from Flask API
-    $response = $this->httpClient->request('GET', 'http://127.0.0.1:5000/symptoms');
-    $symptoms = $response->toArray();
-
-    // Define your form fields here
-    $builder->add('symptoms', ChoiceType::class, [
-        'choices' => $symptoms,
-        'multiple' => true,
-        'expanded' => false,
-        'required' => false,
-        'attr' => [
-            'class' => 'form-control',
-            'id' => 'countries', // Add the 'id' attribute here
-            'multiple' => 'multiple'
-        ],
-    ]);
-}
+    {
+        // Fetch symptoms from Flask API
+        $response = $this->httpClient->request('GET', 'http://127.0.0.1:5000/symptoms');
+        $symptoms = $response->toArray();
+    
+        // Preprocess the symptoms array to remove index keys
+        $symptoms = array_values($symptoms);
+    
+        // Define your form fields here
+        $builder->add('symptoms', ChoiceType::class, [
+            'choices' => $symptoms,
+            'multiple' => true,
+            'expanded' => false,
+            'required' => false,
+            'attr' => [
+                'class' => 'form-control',
+                'id' => 'countries', // Add the 'id' attribute here
+                'multiple' => 'multiple'
+            ],
+        ]);
+    }
 
 
     public function configureOptions(OptionsResolver $resolver)

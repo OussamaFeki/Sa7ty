@@ -21,6 +21,6 @@
 
 ###> symfony/asset-mapper ###
 # /public/assets/
-/assets/vendor/
-/migrations
+/assets/vendor/ 
+/migrations/ 
 ###< symfony/asset-mapper ###

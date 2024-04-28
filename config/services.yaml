@@ -20,7 +20,15 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Migrations/'
+
  # Autoriser l'injection de l'entité Patient
     App\Entity\Patient: ~
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # Configure ApiService with specific dependencies
+    App\Service\ApiService:
+        arguments:
+            $client: '@http_client'  # Injects the HttpClient service
+            $logger: '@logger'       # Injects the Logger service

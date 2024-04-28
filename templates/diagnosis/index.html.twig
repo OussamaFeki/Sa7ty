@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+
+{% block addstylesheets %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+
+{% block body %}
+<div class="overflow-hidden space">
+    <div class="container">
+        {{ form_start(form, {'attr': {'class': 'appointment-form2'}}) }}
+        <div class="row justify-content-center text-center">
+            <div class="col-xl-9">
+                <div class="title-area">
+                    <h3 class="sec-heading">Diagnose Symptoms</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="form-group col-md-6">
+                {{ form_row(form.symptoms, {'attr': {'class': 'form-select select-multiple'}}) }}
+            </div>
+            <div class="row justify-content-center">
+                <div class="form-btn col-2">
+                    <button type="submit" class="th-btn btn-fw">{{ button_label|default('Diagnose') }}</button>
+                </div>
+            </div>
+        {{ form_end(form) }}
+        </div>
+    </div>
+
+    {% if results is not empty %}
+    <div class="container mt-5">
+        <h2 class="sec-heading text-center">Diagnosis Results</h2>
+        {% for result in results %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h3 class="card-title">{{ result.disease }}</h3>
+                <p class="card-text">{{ result.description }}</p>
+                <h4>Precautions</h4>
+                <ul>
+                    {% for precaution in result.precautions %}
+                    <li>{{ precaution }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center mt-4">
+        <p>No results found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+{% block addJavascript %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select-multiple').select2({
+            placeholder: "Select symptoms",
+            allowClear: true,
+            width: '100%' // Ensures the width of the select box matches its container
+        });
+    });
+</script>
+{% endblock %}

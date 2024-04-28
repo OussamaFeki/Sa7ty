@@ -96,10 +96,6 @@
 						<ul>
 							{% if app.user %}
 								{% if app.user.patient %}
-								<li>
-										<a href="{{ path('app_patient_diagnose')}}">DocBot</a>
-
-									</li>
 									<li>
 										<a href="{{ path('app_doctor_index')}}">Doctors</a>
 
@@ -122,17 +118,34 @@
 														<a href="#">Cabinet</a>
 														<ul class="sub-menu">
 															<li>
-																<a href="{{path('app_appointment_index')}}">les rendez-vous</a>
+																<a href="#">les rendez-vous</a>
 															</li>
 															<li>
-																<a href="{{path('app_patient_index')}}">liste des patients</a>
+																<a href="#">liste des patients</a>
 															</li>
 																														<li>
-																<a href="{{path('app_secretary_index')}}">liste des secrétaires</a>
+																<a href="#">liste des secrétaires</a>
+															</li>
+														</ul>
+													</li>
+								{% else %}
+									<li class="menu-item-has-children">
+														<a href="#">Users</a>
+														<ul class="sub-menu">
+															<li>
+																<a href="#">liste des docteurs</a>
+															</li>
+															<li>
+																<a href="#">liste des patients</a>
+															</li>
+																														<li>
+																<a href="#">liste des secrétaires</a>
 															</li>
 														</ul>
 													</li>
 								{% endif %}
+
+													
 							{% endif %}
 
 							<li>
@@ -172,7 +185,7 @@
 								<div class="col-auto">
 									<div class="header-logo">
 										<div class="logo-bg" data-bg-src="assets/img/bg/logo_bg_1.png"></div>
-										<a href="/"><img src="{{asset('assets/img/logo.svg')}}" alt="Mediax"></a>
+										<a href="#"><img src="{{asset('assets/img/logo.svg')}}" alt="Mediax"></a>
 									</div>
 								</div>
 								<div class="col-auto d-none d-lg-inline-block">
@@ -180,10 +193,6 @@
 										<ul>
 											{% if app.user %}
 												{% if app.user.patient %}
-													<li>
-														<a href="{{ path('app_patient_diagnose')}}">DocBot</a>
-
-													</li>
 													<li>
 														<a href="{{ path('app_doctor_index')}}">Doctors</a>
 
@@ -206,15 +215,28 @@
 														<a href="#">Cabinet</a>
 														<ul class="sub-menu">
 															<li>
-																<a href="{{path('app_appointment_index')}}">les rendez-vous</a>
+																<a href="#">les rendez-vous</a>
 															</li>
 															<li>
-																<a href="{{path('app_patient_index')}}">liste des patients</a>
+																<a href="#">liste des patients</a>
 															</li>
 																														<li>
-																<a href="{{path('app_secretary_index')}}">liste des secrétaires</a>
+																<a href="#">liste des secrétaires</a>
 															</li>
 														</ul>
+													</li>
+													{% else %}
+													<li>
+														<a href="{{ path('admin_doctor_index')}}">docteurs</a>
+
+													</li>
+													<li>
+														<a href="{{ path('admin_patient_index')}}">patients</a>
+
+													</li>
+													<li>
+														<a href="{{ path('admin_secretary_index')}}">secrétaires</a>
+
 													</li>
 												
 												{% endif %}
@@ -272,6 +294,17 @@
 							<li>
 								<a href="{{ path('app_about') }}">About Us</a>
 							</li>
+							<li class="menu-item-has-children">
+								<a href="#">Service</a>
+								<ul class="sub-menu">
+									<li>
+										<a href="#">Service</a>
+									</li>
+									<li>
+										<a href="#">Service Details</a>
+									</li>
+								</ul>
+							</li>
 
 							<li>
 								<a href="{{ path('app_blog_index')}}">Blog</a>
@@ -310,6 +343,17 @@
 											</li>
 											<li>
 												<a href="{{ path('app_about') }}">About Us</a>
+											</li>
+											<li class="menu-item-has-children">
+												<a href="#">Service</a>
+												<ul class="sub-menu">
+													<li>
+														<a href="#">Service</a>
+													</li>
+													<li>
+														<a href="#">Service Details</a>
+													</li>
+												</ul>
 											</li>
 
 											<li>

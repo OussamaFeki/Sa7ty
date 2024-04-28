@@ -3,9 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Patient;
-use App\Form\DiagnosticType;
 use App\Form\PatientType;
-use App\Service\ApiService;
 use App\Repository\PatientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,12 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/patient')]
 class PatientController extends AbstractController
 {
-    private $apiService;
-
-    public function __construct(ApiService $apiService)
-    {
-        $this->apiService = $apiService;
-    }
 
     #[Route('/', name: 'app_patient_index', methods: ['GET'])]
     public function index(PatientRepository $patientRepository): Response
@@ -51,38 +43,6 @@ class PatientController extends AbstractController
             'form' => $form,
         ]);
     }
-
-    #[Route('/diagnose', name: 'app_patient_diagnose', methods: ['GET', 'POST'])]
-    public function diagnoseSymptoms(Patient $patient, Request $request): Response
-    {
-        $results = [];  // Initialize results as an empty array
-
-        // Create the form
-        $form = $this->createForm(DiagnosticType::class);
-
-        // Handle form submission
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $symptoms = $form->get('symptoms')->getData();
-
-            if (empty($symptoms)) {
-                $this->addFlash('api_error', 'Please select some symptoms.');
-                return $this->redirectToRoute('app_patient_diagnose', ['id' => $patient->getId()]);
-            }
-
-            // Process symptoms data and fetch results from the API
-            $results = $this->apiService->getDiseasesBySymptoms($symptoms);
-        }
-
-        // Pass the form and results to the template
-        return $this->render('patient/diagnose.html.twig', [
-            'patient' => $patient,
-            'form' => $form->createView(),
-            'results' => $results
-        ]);
-    }
-
 
     #[Route('/{id}', name: 'app_patient_show', methods: ['GET'])]
     public function show(Patient $patient): Response

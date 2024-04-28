@@ -1,26 +1,99 @@
+### Symfony-specific ###
 
-###> symfony/framework-bundle ###
+# Environment files
 /.env.local
-/.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
+
+# Parameters
+/config/services.yaml  # Only if it contains sensitive data
+
+# Symfony cache, logs, sessions, and built assets
+/var/cache/
+/var/log/
+/var/sessions/
 /public/bundles/
-/var/
+
+# Symfony bin directory
+/bin/.phpunit
+/bin/*.phpunit.result.cache
+
+# Vendor directory
 /vendor/
-###< symfony/framework-bundle ###
 
-###> phpunit/phpunit ###
+### PHP ###
+
+# Composer files
+/composer.phar
+/composer.lock
+/vendor/
+/symfony.lock
+
+# PHPUnit
 /phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###
+/phpunit.xml.dist
 
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
+### Frontend ###
 
-###> symfony/asset-mapper ###
-# /public/assets/
-/assets/vendor/ 
-/migrations/ 
-###< symfony/asset-mapper ###
+# Node modules and logs
+/node_modules/
+/npm-debug.log
+/yarn-error.log
+/package-lock.json
+/yarn.lock
+
+# Bower components
+/bower_components/
+
+### Editors and IDEs ###
+
+# IntelliJ
+/.idea/
+
+# VSCode
+.vscode/
+
+# Sublime Text
+/*.sublime-workspace
+/*.sublime-project
+
+# Eclipse
+.buildpath
+.project
+.settings/
+
+### OS Files ###
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+### Logs ###
+*.log
+*.tmp
+
+### Others ###
+# OS generated files
+.AppleDouble
+.LSOverride
+
+# Thumbnail cache files
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk

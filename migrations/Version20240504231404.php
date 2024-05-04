@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240428131721 extends AbstractMigration
+final class Version20240504231404 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +21,8 @@ final class Version20240428131721 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE analyse (id INT AUTO_INCREMENT NOT NULL, analyse_type VARCHAR(255) NOT NULL, result LONGBLOB DEFAULT NULL, consultation_id INT DEFAULT NULL, INDEX IDX_351B0C7E62FF6CDF (consultation_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
-        $this->addSql('CREATE TABLE appointment (id INT AUTO_INCREMENT NOT NULL, date INT NOT NULL, hour INT DEFAULT NULL, patient_status TINYINT(1) DEFAULT NULL, progress VARCHAR(255) NOT NULL, patient_id INT NOT NULL, consultation_id INT DEFAULT NULL, doctor_id INT NOT NULL, INDEX IDX_FE38F8446B899279 (patient_id), UNIQUE INDEX UNIQ_FE38F84462FF6CDF (consultation_id), INDEX IDX_FE38F84487F4FB17 (doctor_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE appointment (id INT AUTO_INCREMENT NOT NULL, date INT NOT NULL, hour INT DEFAULT NULL, patient_status TINYINT(1) DEFAULT NULL, progress VARCHAR(255) NOT NULL, status VARCHAR(255) DEFAULT NULL, patient_id INT NOT NULL, consultation_id INT DEFAULT NULL, doctor_id INT NOT NULL, INDEX IDX_FE38F8446B899279 (patient_id), UNIQUE INDEX UNIQ_FE38F84462FF6CDF (consultation_id), INDEX IDX_FE38F84487F4FB17 (doctor_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE availability (id INT AUTO_INCREMENT NOT NULL, consultation_duration INT NOT NULL, mon_start_hour TIME DEFAULT NULL, mon_end_hour TIME DEFAULT NULL, tue_start_hour TIME DEFAULT NULL, tue_end_hour TIME DEFAULT NULL, wed_end_hour TIME DEFAULT NULL, thu_start_hour TIME DEFAULT NULL, thu_end_hour TIME DEFAULT NULL, sat_start_hour TIME DEFAULT NULL, sat_end_hour TIME DEFAULT NULL, fri_start_hour TIME DEFAULT NULL, fri_end_hour TIME DEFAULT NULL, sun_start_hour TIME DEFAULT NULL, sun_end_hour TIME DEFAULT NULL, wed_start_hour TIME DEFAULT NULL, doctor_id INT NOT NULL, UNIQUE INDEX UNIQ_3FB7A2BF87F4FB17 (doctor_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE blog (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) DEFAULT NULL, details VARCHAR(255) DEFAULT NULL, creation_date INT NOT NULL, doctor_id INT NOT NULL, INDEX IDX_C015514387F4FB17 (doctor_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE consultation (id INT AUTO_INCREMENT NOT NULL, start_at INT NOT NULL, end_at INT NOT NULL, prescription_id INT DEFAULT NULL, patient_id INT NOT NULL, doctor_id INT NOT NULL, UNIQUE INDEX UNIQ_964685A693DB413D (prescription_id), INDEX IDX_964685A66B899279 (patient_id), INDEX IDX_964685A687F4FB17 (doctor_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE doctor (id INT AUTO_INCREMENT NOT NULL, specialty VARCHAR(255) NOT NULL, office_region VARCHAR(255) NOT NULL, office_address VARCHAR(255) NOT NULL, office_phone VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4');
@@ -35,6 +36,7 @@ final class Version20240428131721 extends AbstractMigration
         $this->addSql('ALTER TABLE appointment ADD CONSTRAINT FK_FE38F8446B899279 FOREIGN KEY (patient_id) REFERENCES patient (id)');
         $this->addSql('ALTER TABLE appointment ADD CONSTRAINT FK_FE38F84462FF6CDF FOREIGN KEY (consultation_id) REFERENCES consultation (id)');
         $this->addSql('ALTER TABLE appointment ADD CONSTRAINT FK_FE38F84487F4FB17 FOREIGN KEY (doctor_id) REFERENCES doctor (id)');
+        $this->addSql('ALTER TABLE availability ADD CONSTRAINT FK_3FB7A2BF87F4FB17 FOREIGN KEY (doctor_id) REFERENCES doctor (id)');
         $this->addSql('ALTER TABLE blog ADD CONSTRAINT FK_C015514387F4FB17 FOREIGN KEY (doctor_id) REFERENCES doctor (id)');
         $this->addSql('ALTER TABLE consultation ADD CONSTRAINT FK_964685A693DB413D FOREIGN KEY (prescription_id) REFERENCES prescription (id)');
         $this->addSql('ALTER TABLE consultation ADD CONSTRAINT FK_964685A66B899279 FOREIGN KEY (patient_id) REFERENCES patient (id)');
@@ -53,6 +55,7 @@ final class Version20240428131721 extends AbstractMigration
         $this->addSql('ALTER TABLE appointment DROP FOREIGN KEY FK_FE38F8446B899279');
         $this->addSql('ALTER TABLE appointment DROP FOREIGN KEY FK_FE38F84462FF6CDF');
         $this->addSql('ALTER TABLE appointment DROP FOREIGN KEY FK_FE38F84487F4FB17');
+        $this->addSql('ALTER TABLE availability DROP FOREIGN KEY FK_3FB7A2BF87F4FB17');
         $this->addSql('ALTER TABLE blog DROP FOREIGN KEY FK_C015514387F4FB17');
         $this->addSql('ALTER TABLE consultation DROP FOREIGN KEY FK_964685A693DB413D');
         $this->addSql('ALTER TABLE consultation DROP FOREIGN KEY FK_964685A66B899279');
@@ -64,6 +67,7 @@ final class Version20240428131721 extends AbstractMigration
         $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D64987F4FB17');
         $this->addSql('DROP TABLE analyse');
         $this->addSql('DROP TABLE appointment');
+        $this->addSql('DROP TABLE availability');
         $this->addSql('DROP TABLE blog');
         $this->addSql('DROP TABLE consultation');
         $this->addSql('DROP TABLE doctor');

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Availability{% endblock %}
+
+{% block body %}
+    <h1>Availability</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ availability.id }}</td>
+            </tr>
+            <tr>
+                <th>Consultation_duration</th>
+                <td>{{ availability.consultationDuration }}</td>
+            </tr>
+            <tr>
+                <th>Mon_start_hour</th>
+                <td>{{ availability.monStartHour ? availability.monStartHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Mon_end_hour</th>
+                <td>{{ availability.monEndHour ? availability.monEndHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Tue_start_hour</th>
+                <td>{{ availability.tueStartHour ? availability.tueStartHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Tue_end_hour</th>
+                <td>{{ availability.tueEndHour ? availability.tueEndHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Wed_start_hour</th>
+                <td>{{ availability.wedStartHour ? availability.wedStartHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Wed_end_hour</th>
+                <td>{{ availability.wedEndHour ? availability.wedEndHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Thu_start_hour</th>
+                <td>{{ availability.thuStartHour ? availability.thuStartHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Thu_end_hour</th>
+                <td>{{ availability.thuEndHour ? availability.thuEndHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Sat_start_hour</th>
+                <td>{{ availability.satStartHour ? availability.satStartHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Sat_end_hour</th>
+                <td>{{ availability.satEndHour ? availability.satEndHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Fri_start_hour</th>
+                <td>{{ availability.friStartHour ? availability.friStartHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Fri_end_hour</th>
+                <td>{{ availability.friEndHour ? availability.friEndHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Sun_start_hour</th>
+                <td>{{ availability.sunStartHour ? availability.sunStartHour|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Sun_end_hour</th>
+                <td>{{ availability.sunEndHour ? availability.sunEndHour|date('H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_availability_index') }}">back to list</a>
+
+    <a href="{{ path('app_availability_edit', {'id': availability.id}) }}">edit</a>
+
+    {{ include('availability/_delete_form.html.twig') }}
+{% endblock %}

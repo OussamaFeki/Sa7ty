@@ -11,6 +11,7 @@ use App\Entity\Secretary;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\Availability; 
 
 class AppFixtures extends Fixture
 {
@@ -56,6 +57,30 @@ class AppFixtures extends Fixture
                     // Associate Doctor with User
                     $user->setRoles(['ROLE_DOCTOR']);
                     $doctor->setUser($user);
+
+                    // Create availability for all days from 8:00 to 19:00
+                    $availability = new Availability();
+                    $availability->setDoctor($doctor);
+                    $availability->setConsultationDuration(30); // Assuming consultation duration is 30 minutes
+
+                    // Set start and end hours for all days
+                    $availability->setMonStartHour(new \DateTime('08:00:00'));
+                    $availability->setMonEndHour(new \DateTime('19:00:00'));
+                    $availability->setTueStartHour(new \DateTime('08:00:00'));
+                    $availability->setTueEndHour(new \DateTime('19:00:00'));
+                    $availability->setWedStartHour(new \DateTime('08:00:00'));
+                    $availability->setWedEndHour(new \DateTime('19:00:00'));
+                    $availability->setThuStartHour(new \DateTime('08:00:00'));
+                    $availability->setThuEndHour(new \DateTime('19:00:00'));
+                    $availability->setFriStartHour(new \DateTime('08:00:00'));
+                    $availability->setFriEndHour(new \DateTime('19:00:00'));
+                    $availability->setSatStartHour(new \DateTime('08:00:00'));
+                    $availability->setSatEndHour(new \DateTime('19:00:00'));
+                    $availability->setSunStartHour(new \DateTime('08:00:00'));
+                    $availability->setSunEndHour(new \DateTime('19:00:00'));
+
+                    $manager->persist($availability);
+
                     $manager->persist($doctor);
 
                     for ($i = 0; $i < 7; $i++) {

@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Appointment;
 use App\Form\AppointmentType;
 use App\Repository\AppointmentRepository;
+use App\Repository\DoctorRepository;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,10 +17,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class AppointmentController extends AbstractController
 {
     #[Route('/', name: 'app_appointment_index', methods: ['GET'])]
-    public function index(AppointmentRepository $appointmentRepository): Response
+    public function index(AppointmentRepository $appointmentRepository,DoctorRepository $doctorRepository ): Response
     {
         return $this->render('appointment/index.html.twig', [
-            'appointments' => $appointmentRepository->findAll(),
+            'appointments' => $appointmentRepository->findAll(),'doctors' => $doctorRepository->findAll(),
         ]);
     }
 

@@ -42,6 +42,9 @@ class Doctor
     #[ORM\ManyToMany(targetEntity: Secretary::class, inversedBy: 'doctors')]
     private Collection $Secretarys;
 
+    #[ORM\OneToOne(mappedBy: 'doctor', cascade: ['persist', 'remove'])]
+    private ?Availability $availability = null;
+
     public function __construct()
     {
         $this->Consultations = new ArrayCollection();
@@ -235,6 +238,23 @@ class Doctor
     public function removeSecretary(Secretary $secretary): static
     {
         $this->Secretarys->removeElement($secretary);
+
+        return $this;
+    }
+
+    public function getAvailability(): ?Availability
+    {
+        return $this->availability;
+    }
+
+    public function setAvailability(Availability $availability): static
+    {
+        // set the owning side of the relation if necessary
+        if ($availability->getDoctor() !== $this) {
+            $availability->setDoctor($this);
+        }
+
+        $this->availability = $availability;
 
         return $this;
     }

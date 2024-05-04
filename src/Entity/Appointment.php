@@ -36,6 +36,9 @@ class Appointment
     #[ORM\JoinColumn(nullable: false)]
     private ?Doctor $Doctor = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $Status = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -121,6 +124,18 @@ class Appointment
     public function setDoctor(?Doctor $Doctor): static
     {
         $this->Doctor = $Doctor;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->Status;
+    }
+
+    public function setStatus(?string $Status): static
+    {
+        $this->Status = $Status;
 
         return $this;
     }

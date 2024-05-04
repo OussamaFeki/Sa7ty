@@ -78,4 +78,26 @@ class AppointmentController extends AbstractController
 
         return $this->redirectToRoute('app_appointment_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/doctor', name: 'app_appointment_doctor_index', methods: ['GET'])]
+    public function doctorIndex(AppointmentRepository $appointmentRepository,Request $request): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+    
+        // Check if the user is a doctor
+        if ($user && $user->getDoctor()) {
+        $doctor = $user->getDoctor();
+        // Get appointments associated with the doctor
+        $appointments = $doctor->getAppointments(); // Assuming Doctor has a method getAppointments()
+        return $this->render('appointment/doctor_index.html.twig', [
+            'appointments' => $appointments,
+        ]);
+        }else{
+            return $this->redirect($request->server->get('HTTP_REFERER')); 
+          
+        }
+        
+    }
 }

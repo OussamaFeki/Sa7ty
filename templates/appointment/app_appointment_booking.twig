@@ -2,319 +2,121 @@
 
 {% block title %}Appointment index
 {% endblock %}
+
 {% block addstylesheets %}
-	<style>
-		.card {
-			width: auto;
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			overflow: hidden;
-			margin: 20px;
-			transition: height 0.3s ease;
-		}
+<style>
+    .card {
+        max-width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 20px auto;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 
-		.card .content {
-			padding: 20px;
-			display: flex;
-			justify-content: space-between;
-		}
+    .card .content {
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+    }
 
-		.card.expanded {
-			height: auto;
-		}
+    .card.expanded .content {
+        margin-bottom: 10px;
+    }
 
-		.card.expanded .content {
-			margin-bottom: 20px;
-		}
-		#more {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			width: 50%;
-		}
-		.read-more-btn {
-			background-color: white;
-			color: #007bff;
-			border: none;
-			padding: 8px 16px;
-			position: relative;
-			cursor: pointer;
-			font-weight: bolder;
-		}
+    #more {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+    }
 
-		.read-more-btn:hover {
-			color: #0056b3;
-		}
+    .read-more-btn {
+        background-color: #007bff;
+        color: white;
+        border: 1px solid #007bff;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s;
+    }
 
-		.nav-btn {
-			background-color: #ccc;
-			color: #000;
-			border: none;
-			padding: 8px 16px;
-			cursor: pointer;
-			margin: 0 5px;
-		}
-		td {
-			background-color: #e5f9ff;
-			width: fit-content;
-			border-radius: 5px;
-			width: 65px;
-			text-align: center;
-			height: 30px;
-			border: 3px solid #ffff;
-		}
-		td:hover {
-			background-color: #ccf2ff;
-		}
-		thead td:hover {
-			background-color: transparent;
-		}
-		thead td {
-			font-style: oblique;
-			font-weight: lighter;
-			font-size: small;
-			background-color: transparent;
+    .read-more-btn:hover {
+        background-color: #0056b3;
+        border-color: #004095;
+    }
 
-		}
-		thead td::first-line {
-			font-size: large;
-			font-weight: bolder;
-		}
-		.desc {
-			flex: 1;
-		}
-		.desc h2 {
-			color: #007bff;
-			font: lighter;
-		}
-		.calond {
-			flex: 2;
-			width: fit-content;
-		}
-		.table {
-			display: flex;
-			width: fit-content;
-		}
-		.table button {
-			width: 20px;
-			height: 30px;
-			padding-top: 0;
-			border: none;
-			display: flex;
-			justify-content: center;
-			color: #004080;
-			font-size: larger;
-			background-color: transparent;
-			border-radius: 50%;
-		}
-		.table button::content {
-			padding-top: 10px;
-		}
-		.table button:hover {
-			background-color: #e7f4fd;
-		}
-		.visit {
-			border: none;
-			border-radius: 10px;
-			background-color: #107aca;
-			color: white;
-			height: 40px;
-			width: 200px;
-			font-weight: bolder;
-		}
-		.visit:hover {
-			background-color: #045fae;
-			cursor: pointer;
-		}
-		a.path {
-			color: #107aca;
-			font-weight: bolder;
-			text-decoration: none;
-		}
-		a.path:hover {
-			color: #045fae;
-			text-decoration: underline;
-		}
-		p.secteur {
-			font-weight: lighter;
-			color: gray;
-		}
-	</style>
+    .desc, .calond {
+        flex: 1; /* Adjust to share space on larger screens */
+        margin-bottom: 0px; /* No margin-bottom */
+        padding-bottom: 0px; /* No padding-bottom */
+    }
+
+    .table {
+        width: 100%; /* Use full container width */
+        overflow-x: auto; /* Make table scrollable on small screens */
+        margin-top: 0px; /* No additional margin-top */
+    }
+
+    td {
+        background-color: #e5f9ff;
+        padding: 8px;
+        border-radius: 5px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    td:hover {
+        background-color: #ccf2ff;
+    }
+
+    @media (min-width: 768px) {
+        .desc, .calond {
+            flex: 1; /* Flex adjustments for large screens */
+            margin-bottom: 0px; /* Specifically remove any bottom margin */
+        }
+    }
+
+    @media (max-width: 767px) {
+        .card .content {
+            flex-direction: column;
+        }
+    }
+
+    thead td {
+        font-style: italic;
+        font-weight: normal;
+        background-color: transparent;
+    }
+
+    .visit {
+        background-color: #107aca;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .visit:hover {
+        background-color: #045fae;
+    }
+</style>
 {% endblock %}
-{# {% block body %} #}
 
-	{# 
-	    <h1>Appointment index</h1>
-	
-	    <table class="table">
-	        <thead>
-	            <tr>
-	                <th>Id</th>
-	                <th>Date</th>
-	                <th>Hour</th>
-	                <th>PatientStatus</th>
-	                <th>Progress</th>
-	                <th>actions</th>
-	            </tr>
-	        </thead>
-	        <tbody>
-	        {% for appointment in appointments %}
-	            <tr>
-	                <td>{{ appointment.id }}</td>
-	                <td>{{ appointment.date }}</td>
-	                <td>{{ appointment.hour }}</td>
-	                <td>{{ appointment.patientStatus ? 'Yes' : 'No' }}</td>
-	                <td>{{ appointment.progress }}</td>
-	                <td>
-	                    <a href="{{ path('app_appointment_show', {'id': appointment.id}) }}">show</a>
-	                    <a href="{{ path('app_appointment_edit', {'id': appointment.id}) }}">edit</a>
-	                </td>
-	            </tr>
-	        {% else %}
-	            <tr>
-	                <td colspan="6">no records found</td>
-	            </tr>
-	        {% endfor %}
-	        </tbody>
-	    </table>
-	
-	    <a href="{{ path('app_appointment_new') }}">Create new</a> #}
 
-	{# <table class="table">
-	        <thead>
-	            <tr>
-	                <th>Id</th>
-	                <th>Date</th>
-	                <th>Hour</th>
-	                <th>PatientStatus</th>
-	                <th>Progress</th>
-	                <th>actions</th>
-	            </tr>
-	        </thead>
-	        <tbody>
-	        {% for appointment in appointments %}
-	            <tr>
-	                <td>{{ appointment.id }}</td>
-	                <td>{{ appointment.date }}</td>
-	                <td>{{ appointment.hour }}</td>
-	                <td>{{ appointment.patientStatus ? 'Yes' : 'No' }}</td>
-	                <td>{{ appointment.progress }}</td>
-	                <td>
-	                    <a href="{{ path('app_appointment_show', {'id': appointment.id}) }}">show</a>
-	                    <a href="{{ path('app_appointment_edit', {'id': appointment.id}) }}">edit</a>
-	                </td>
-	            </tr>
-	        {% else %}
-	            <tr>
-	                <td colspan="6">no records found</td>
-	            </tr>
-	        {% endfor %}
-	        </tbody>
-	    </table> #}
-
-		{# {%for doctor in doctors%}
-			<div class="card"> <div class="content">
-				<div id="desc{{ doctor.id}}" class="desc">
-					<h2>
-						{{doctor.getUser.getFullName}}</h2>
-					<h4>{{doctor.specialty}}</h4>
-				</div>
-				<div id="calond{{ doctor.id }}" class="calond">
-					<div id="table{{ doctor.id }}" class="table">
-
-						<table>
-							<thead>
-								<tr>
-									{% if doctor.getAvailability.getMonStartHour %}
-										<th>Mon</th>
-									{% endif %}
-									{% if doctor.getAvailability.getTueStartHour %}
-										<th>Tue</th>
-									{% endif %}
-									{% if doctor.getAvailability.getWedStartHour %}
-										<th>Wed</th>
-									{% endif %}
-									{% if doctor.getAvailability.getThuStartHour %}
-										<th>Thu</th>
-									{% endif %}
-									{% if doctor.getAvailability.getFriStartHour %}
-										<th>Fri</th>
-									{% endif %}
-									{% if doctor.getAvailability.getSatStartHour %}
-										<th>Sat</th>
-									{% endif %}
-									{% if doctor.getAvailability.getSunStartHour %}
-										<th>Sun</th>
-									{% endif %}
-								</tr>
-							</thead>
-							<tbody>
-                {% for hour in 6..20 %}
-									{% set show = loop.first %}
-									<tr class="{{ not show ? 'extra-rows' : '' }}" style="{{ not show ? 'display: none;' : '' }}">
-										{% if doctor.getAvailability.getMonStartHour %}
-											<td>{{ hour }}:00</td>
-										{% endif %}
-										{% if doctor.getAvailability.getTueStartHour %}
-											<td>{{ hour }}:00</td>
-										{% endif %}
-										{% if doctor.getAvailability.getWedStartHour %}
-											<td>{{ hour }}:00</td>
-										{% endif %}
-										{% if doctor.getAvailability.getThuStartHour %}
-											<td>{{ hour }}:00</td>
-										{% endif %}
-										{% if doctor.getAvailability.getFriStartHour %}
-											<td>{{ hour }}:00</td>
-										{% endif %}
-										{% if doctor.getAvailability.getSatStartHour %}
-											<td>{{ hour }}:00</td>
-										{% endif %}
-										{% if doctor.getAvailability.getSunStartHour %}
-											<td>{{ hour }}:00</td>
-										{% endif %}
-									</tr>
-									<tr class="extra-rows" style="display: none;">
-										{% if doctor.getAvailability.getMonStartHour %}
-											<td>{{ hour }}:30</td>
-										{% endif %}
-										{% if doctor.getAvailability.getTueStartHour %}
-											<td>{{ hour }}:30</td>
-										{% endif %}
-										{% if doctor.getAvailability.getWedStartHour %}
-											<td>{{ hour }}:30</td>
-										{% endif %}
-										{% if doctor.getAvailability.getThuStartHour %}
-											<td>{{ hour }}:30</td>
-										{% endif %}
-										{% if doctor.getAvailability.getFriStartHour %}
-											<td>{{ hour }}:30</td>
-										{% endif %}
-										{% if doctor.getAvailability.getSatStartHour %}
-											<td>{{ hour }}:30</td>
-										{% endif %}
-										{% if doctor.getAvailability.getSunStartHour %}
-											<td>{{ hour }}:30</td>
-										{% endif %}
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-					<div id="more {{ doctor.id }}" class="more">
-						<button class="read-more-btn" data-card="{{ doctor.id }}">VOIR PLUS D'HORAIRES</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %} #}
   {% block body %}
 {% for doctor in doctors %}
+
+<div class="overflow-hidden space">
+	<div class="container">
+
 <div class="card">
     <div class="content">
         <div id="desc{{ doctor.id }}" class="desc">
-            <h2>{{ doctor.getUser.getFullName }}</h2>
-            <h4>{{ doctor.specialty }}</h4>
+            <h4>{{ doctor.getUser.getFullName }}</h4>
+            <h6>{{ doctor.specialty }}</h6>
         </div>
         <div id="calond{{ doctor.id }}" class="calond">
             <table>
@@ -348,11 +150,9 @@
                                     {% set currentHour = startHour|date_modify('+' ~ i * doctor.getAvailability.consultationDuration ~ ' minutes') %}
                                     {% if currentHour <= endHour %}
                                         <td>{{ currentHour|date('H:i') }}</td>
-                                    {% else %}
-                                        <td></td>
+                                    
                                     {% endif %}
-                                {% else %}
-                                    <td></td>
+                                
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
@@ -365,6 +165,10 @@
     </div>
 </div>
 {% endfor %}
+
+</div>
+
+</div>
 {% endblock %}
 
 {% block addJavascript %}

@@ -76,8 +76,7 @@ class AppFixtures extends Fixture
                     $availability->setFriEndHour(new \DateTime('19:00:00'));
                     $availability->setSatStartHour(new \DateTime('08:00:00'));
                     $availability->setSatEndHour(new \DateTime('19:00:00'));
-                    $availability->setSunStartHour(new \DateTime('08:00:00'));
-                    $availability->setSunEndHour(new \DateTime('19:00:00'));
+
 
                     $manager->persist($availability);
 

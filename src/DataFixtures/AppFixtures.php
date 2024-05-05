@@ -66,14 +66,19 @@ class AppFixtures extends Fixture
                     // Set start and end hours for all days
                     $availability->setMonStartHour(new \DateTime('08:00:00'));
                     $availability->setMonEndHour(new \DateTime('19:00:00'));
+
                     $availability->setTueStartHour(new \DateTime('08:00:00'));
                     $availability->setTueEndHour(new \DateTime('19:00:00'));
+
                     $availability->setWedStartHour(new \DateTime('08:00:00'));
                     $availability->setWedEndHour(new \DateTime('19:00:00'));
+
                     $availability->setThuStartHour(new \DateTime('08:00:00'));
                     $availability->setThuEndHour(new \DateTime('19:00:00'));
+
                     $availability->setFriStartHour(new \DateTime('08:00:00'));
                     $availability->setFriEndHour(new \DateTime('19:00:00'));
+                    
                     $availability->setSatStartHour(new \DateTime('08:00:00'));
                     $availability->setSatEndHour(new \DateTime('19:00:00'));
 

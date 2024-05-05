@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Appointment;
+use App\Entity\Doctor;
 use App\Form\AppointmentType;
 use App\Repository\AppointmentRepository;
 use App\Repository\DoctorRepository;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -89,26 +89,36 @@ class AppointmentController extends AbstractController
 
         return $this->redirectToRoute('app_appointment_index', [], Response::HTTP_SEE_OTHER);
     }
-    // #[Route('/doctor', name: 'app_appointment_doctor_index', methods: ['GET'])]
-    // public function doctorIndex(AppointmentRepository $appointmentRepository,Request $request): Response
-    // {
-    //     $user = $this->getUser();
-    //     if (!$user) {
-    //         return $this->redirectToRoute('app_login');
-    //     }
+
+    #[Route('/new_booking/{doctorId}/{dateTimeStamp}/{startAt}', name: 'app_appointment_book_now', methods: ['GET', 'POST'])]
+    public function bookNow(int $doctorId, int $dateTimeStamp, int $startAt, Request $request, EntityManagerInterface $entityManager, DoctorRepository $doctorRepository): Response
+    {
+        // Check if the logged-in user has the 'Patient' role
+        if (in_array('ROLE_PATIENT', $this->getUser()->getRoles())) {
+            $doctor = $doctorRepository->find($doctorId);
+            if (!$doctor) {
+                throw $this->createNotFoundException('No doctor found for id ' . $doctorId);
+            }
     
-    //     // Check if the user is a doctor
-    //     if ($user && $user->getDoctor()) {
-    //     $doctor = $user->getDoctor();
-    //     // Get appointments associated with the doctor
-    //     $appointments = $doctor->getAppointments(); // Assuming Doctor has a method getAppointments()
-    //     return $this->render('appointment/doctor_index.html.twig', [
-    //         'appointments' => $appointments,
-    //     ]);
-    //     }else{
-    //         return $this->redirect($request->server->get('HTTP_REFERER')); 
-          
-    //     }
-        
-    // }
+            // Create a new Appointment entity
+            $appointment = new Appointment();
+            $appointment->setDoctor($doctor);
+            $appointment->setPatient($this->getUser()->getPatient());
+            $appointment->setDate($startAt); // Set date from converted timestamp
+            $appointment->setHour($dateTimeStamp); // Set hour from converted timestamp
+            $appointment->setProgress("RESERVED");
+    
+            // Persist the appointment
+            $entityManager->persist($appointment);
+            $entityManager->flush();
+    
+            // Redirect to the appointments index page, or another suitable confirmation page
+            return $this->redirectToRoute('app_appointment_booking', [], Response::HTTP_SEE_OTHER);
+        }
+    
+        // If the user is not a patient or not logged in, redirect to a login page or deny access
+        return $this->redirectToRoute('app_login', [], Response::HTTP_SEE_OTHER);
+    }
+    
+    
 }

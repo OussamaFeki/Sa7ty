@@ -140,39 +140,39 @@
 								</tr>
 							</thead>
 							<tbody>
-                  {% set maxIntervals = 0 %}
-                  {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-                      {% set startHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'StartHour') %}
-                      {% set endHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'EndHour') %}
-                      {% if startHour and endHour %}
-                          {% set intervals = (endHour.timestamp - startHour.timestamp) / (doctor.getAvailability.consultationDuration * 60) %}
-                          {% set maxIntervals = max(maxIntervals, intervals) %}
-                      {% endif %}
-                  {% endfor %}
-                  {% for i in 0..maxIntervals %}
-                      <tr class="{{ i >= 3 ? 'extra-rows' : '' }}" style="{{ i >= 3 ? 'display: none;' : '' }}">
-                          {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-                              {% set startHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'StartHour') %}
-                              {% set endHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'EndHour') %}
-                              {% if startHour and endHour %}
-                                  {% set StartConsultation = startHour|date_modify('+' ~ i * doctor.getAvailability.consultationDuration ~ ' minutes') %}
-                                  {% set EndConsultation = StartConsultation|date_modify('+' ~ doctor.getAvailability.consultationDuration ~ ' minutes') %}
+								{% set maxIntervals = 0 %}
+								{% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+									{% set startHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'StartHour') %}
+									{% set endHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'EndHour') %}
+									{% if startHour and endHour %}
+										{% set intervals = (endHour.timestamp - startHour.timestamp) / (doctor.getAvailability.consultationDuration * 60) %}
+										{% set maxIntervals = max(maxIntervals, intervals) %}
+									{% endif %}
+								{% endfor %}
+								{% for i in 0..maxIntervals %}
+									<tr class="{{ i >= 3 ? 'extra-rows' : '' }}" style="{{ i >= 3 ? 'display: none;' : '' }}">
+										{% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+											{% set startHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'StartHour') %}
+											{% set endHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'EndHour') %}
+											{% if startHour and endHour %}
+												{% set StartConsultation = startHour|date_modify('+' ~ i * doctor.getAvailability.consultationDuration ~ ' minutes') %}
+												{% set EndConsultation = StartConsultation|date_modify('+' ~ doctor.getAvailability.consultationDuration ~ ' minutes') %}
+												{% set date_timestamp = StartConsultation|date('U') %} <!-- Define the timestamp here -->
 
-                                  {% if StartConsultation <= endHour and EndConsultation <= endHour %}
-                                      <td>
-                                          {{ StartConsultation|date('H:i') }}<br>{{ EndConsultation|date('H:i') }}
-                                          <br>
-                                          <button class="btn-sm btn-book" onclick="bookAppointment('{{ StartConsultation|date('c') }}', '{{ EndConsultation|date('c') }}')">Book</button>
-                                      </td>
-                                  {% endif %}
-                              {% endif %}
-                          {% endfor %}
-                      </tr>
-                  {% endfor %}
-              </tbody>
-
-
+												{% if StartConsultation <= endHour and EndConsultation <= endHour %}
+													<td>
+														{{ StartConsultation|date('H:i') }} - {{ EndConsultation|date('H:i') }}
+														<br>
+														<a href="{{ path('app_appointment_book_now', {'doctorId': doctor.id, 'dateTimeStamp': date_timestamp, 'startAt': StartConsultation|date('U')}) }}" class="btn-sm btn-book">Book</a>
+													</td>
+												{% endif %}
+											{% endif %}
+										{% endfor %}
+									</tr>
+								{% endfor %}
+							</tbody>
 						</table>
+
 						<div id="more{{ doctor.id }}" class="more">
 							<button class="th-btn read-more-btn" data-card="{{ doctor.id }}">See More Times</button>
 						</div>

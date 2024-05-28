@@ -104,16 +104,27 @@ class AppointmentController extends AbstractController
             $appointment = new Appointment();
             $appointment->setDoctor($doctor);
             $appointment->setPatient($this->getUser()->getPatient());
-            $appointment->setDate($startAt); // Set date from converted timestamp
-            $appointment->setHour($dateTimeStamp); // Set hour from converted timestamp
+            
+            // Convert timestamp to DateTime object
+            $appointmentDate = new \DateTime();
+            $appointmentDate->setTimestamp($dateTimeStamp);
+            $appointment->setDate($dateTimeStamp);
+            
+            // Set start time (assuming $startAt is in seconds, e.g., 3600 for 1 hour)
+            $startHour = (int)($startAt / 3600);
+            $appointment->setHour($startHour);
+            
             $appointment->setProgress("RESERVED");
     
             // Persist the appointment
             $entityManager->persist($appointment);
             $entityManager->flush();
     
-            // Redirect to the appointments index page, or another suitable confirmation page
-            return $this->redirectToRoute('app_appointment_booking', [], Response::HTTP_SEE_OTHER);
+            // Add flash message
+            $this->addFlash('success', 'Appointment successfully booked.');
+    
+            // Redirect to the appointment show page
+            return $this->redirectToRoute('app_appointment_show', ['id' => $appointment->getId()]);
         }
     
         // If the user is not a patient or not logged in, redirect to a login page or deny access

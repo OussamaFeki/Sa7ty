@@ -73,6 +73,16 @@
 
 	<body>
 
+		{% for type, messages in app.flashes %}
+        <div class="flash-messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ type }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    	{% endfor %}
+
 		<!--==============================
 										     Preloader
 										  ==============================-->

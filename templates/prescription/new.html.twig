@@ -1,11 +1,288 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}New Prescription{% endblock %}
+{% block addstylesheets %}
+    <link rel="stylesheet" href="{{ asset('perscriptions.css') }}">
+    <style>
+
+.container1{
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.prescription-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-group input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.favorite {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.form-actions1 {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+.divider {
+    width: 1px;
+    background-color: #ccc;
+    margin: 0 20px;
+}
+.title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.confirm-button {
+    margin-top: 10px;
+    width: auto;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-radius:50%;
+    margin-left: 10px;
+    margin-top:10px
+}
+
+.delete-button:hover {
+    background-color: darkred;
+}
+.medicament-entry, .analyse-entry {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.medicament-entry span, .analyse-entry span {
+    display: inline-block;
+}
+
+.medicament-entry .delete-button, .analyse-entry .delete-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.title-wrapper h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.plus-button {
+    background-color: lightgreen;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.plus-button:hover {
+    background-color: green;
+}
+.form-actions button {
+    padding: 10px 20px;
+    background-color: lightgreen;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-actions button:hover {
+    background-color: green;
+}
+
+/* for make disappear the buttons  : */
+@media print {
+    button[type="button"],button[type="submit"] {
+      display: none;
+    }
+      body * {
+    display: none;
+  }
+  .container1, .container1 * {
+    display: block;
+  }
+  .container1 {
+    position: center;
+    
+  }
+  }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Prescription</h1>
+    <div class="container1">
+        <div class="header">
+            <h1>Dr Meg Wallace, MD</h1>
+            <p>1034 North Highland Avenue<br>Murfreesboro, TN 37130</p>
+            <p>Phone: 1615945825 &nbsp;&nbsp;&nbsp; Fax: 6154135079</p>
+            <p>DEA: ________ &nbsp;&nbsp;&nbsp; NPI: ________</p>
+        </div>
+        <form class="prescription-form">
+            <div class="form-group">
+                <label for="patient-name">Patient Name</label>
+                <input type="text" id="patient-name" name="patient-name" list="patients">
+                <datalist id="patients">
+                    <option value="John Doe D.O.B: 1989-08-17"></option>
+                </datalist>
+            </div>
+            <div class="form-actions1">
+                <div class="form-group" id="medicament-group">
+                    <div class="title-wrapper">
+                        <h1>Medicament</h1>
+                        <button type="button" class="plus-button" onclick="addMedicament()">+</button>
+                    </div>
+                    <div class="medicament-entry">
+                        <label for="drug-name">medicine</label>
+                        <input type="text" id="drug-name" name="drug-name">
+                        <label for="instructions">description</label>
+                        <textarea id="instructions" name="instructions"></textarea>
+                        <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="form-group" id="analyse-group">
+                    <div class="title-wrapper">
+                        <h1>Analyse</h1>
+                        <button type="button" class="plus-button" onclick="addAnalyse()">+</button>
+                    </div>
+                    <div class="analyse-entry">
+                        <label for="analyse-type">Type</label>
+                        <input type="text" id="analyse-type" name="analyse-type">
+                        <label for="analyse-instructions">resultat</label>
+                        <textarea id="analyse-instructions" name="analyse-instructions"></textarea>
+                        <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="print-button" onclick="window.print()" disabled>Print</button>
+                <button type="submit">Fax to Pharmacy</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function addMedicament() {
+            const formGroup = document.getElementById('medicament-group');
+            const newMedicament = document.createElement('div');
+            newMedicament.classList.add('medicament-entry');
+            newMedicament.innerHTML = `
+                <label for="additional-drug-name">medicine</label>
+                <input type="text" name="additional-drug-name">
+                <label for="additional-instructions">description</label>
+                <textarea name="additional-instructions"></textarea>
+                <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+            `;
+            formGroup.appendChild(newMedicament);
+        }
+
+        function addAnalyse() {
+            const formGroup = document.getElementById('analyse-group');
+            const newAnalyse = document.createElement('div');
+            newAnalyse.classList.add('analyse-entry');
+            newAnalyse.innerHTML = `
+                <label for="additional-analyse-type">Type</label>
+                <input type="text" name="additional-analyse-type">
+                <label for="additional-analyse-instructions">resultat</label>
+                <textarea name="additional-analyse-instructions"></textarea>
+                <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+            `;
+            formGroup.appendChild(newAnalyse);
+        }
+
+        function confirmInput(button) {
+            const parentDiv = button.parentElement;
+            const inputs = parentDiv.querySelectorAll('input, textarea');
+
+            inputs.forEach(input => {
+                const text = input.value;
+                const span = document.createElement('span');
+                span.textContent = text;
+                span.className = 'confirmed-text';
+                input.replaceWith(span);
+            });
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '-';
+            deleteButton.type = 'button';
+            deleteButton.className = 'delete-button';
+            deleteButton.onclick = () => deleteConfirmed(parentDiv);
+            parentDiv.appendChild(deleteButton);
+
+            button.remove();
+            checkAllConfirmed();
+        }
+
+        function deleteConfirmed(parentDiv) {
+            parentDiv.remove();
+            checkAllConfirmed();
+        }
+
+        function checkAllConfirmed() {
+            const medicamentGroup = document.getElementById('medicament-group');
+            const analyseGroup = document.getElementById('analyse-group');
+            const allMedicamentConfirmed = medicamentGroup.querySelectorAll('.medicament-entry input, .medicament-entry textarea').length === 0;
+            const allAnalyseConfirmed = analyseGroup.querySelectorAll('.analyse-entry input, .analyse-entry textarea').length === 0;
+
+            const printButton = document.getElementById('print-button');
+            printButton.disabled = !(allMedicamentConfirmed && allAnalyseConfirmed);
+        }
+    </script>
+
+    <!--<h1>Create new Prescription</h1>
 
     {{ include('prescription/_form.html.twig') }}
 
-    <a href="{{ path('app_prescription_index') }}">back to list</a>
+    <a href="{{ path('app_prescription_index') }}">back to list</a> -->
 {% endblock %}

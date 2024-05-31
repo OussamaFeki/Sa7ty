@@ -49,7 +49,7 @@
 			<tbody>
             			{% for patient in patients %}
 
-<tr class="cart_item">
+				<tr class="cart_item">
 					<td data-title="Nom Complet">
 						<span>{{ patient.user.firstName}} {{ patient.user.lastName}}</span>
 					</td>
@@ -62,12 +62,26 @@
 					<td data-title="Nombre de Consultation">
 						<span>{{ patient.user.phone}}</span>
 					</td>
+
 					<td data-title="Action">
-						<a href="{{ path('app_consultation_index')}}">
-							<span>Consultations</span>
-							<i class="fa-regular fa-file"></i>
-						</a>
+								<div class="menu-all-pages-container">
+									<ul class="menu">
+										<li>	
+										<a href="{{ path('app_prescription_index')}}">
+											<i class="fa fa-list"></i>
+											<span>Voir toutes les ordonnances</span>
+										</a>					
+										</li>
+										<li>
+											<a href="{{ path('app_prescription_new')}}">
+												<i class="fa fa-plus"></i>
+												<span>Nouvelle ordonnance</span>
+											</a>
+										</li>
+									</ul>
+								</div>
 					</td>
+
 				</tr>
 
 			{% else %}

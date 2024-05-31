@@ -74,7 +74,7 @@
     align-items: center;
     justify-content: space-between;
 }
-.confirm-button {
+.confirm-button,.annuler-button  {
     margin-top: 10px;
     width: auto;
     padding: 5px 10px;
@@ -91,6 +91,16 @@
     border-radius:50%;
     margin-left: 10px;
     margin-top:10px
+}
+.edit-button{
+    background-color: gold;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius:25px;
+    margin-left: 10px;
+    margin-top:10px
+
 }
 
 .delete-button:hover {
@@ -115,7 +125,7 @@
     margin-bottom: 10px;
 }
 
-.plus-button {
+.plus-button{
     background-color: lightgreen;
     color: white;
     border: none;
@@ -162,12 +172,12 @@
 {% endblock %}
 
 {% block body %}
-   <div class="container1">
+<div class="container1">
     <div class="header">
         <h1>Dr Meg Wallace, MD</h1>
         <p>1034 North Highland Avenue<br>Murfreesboro, TN 37130</p>
         <p>Phone: 1615945825 &nbsp;&nbsp;&nbsp; Fax: 6154135079</p>
-        <p>DEA: ________ &nbsp;&nbsp;&nbsp; NPI: ________</p>
+        <p>DEA: ____ &nbsp;&nbsp;&nbsp; NPI: ________</p>
     </div>
     <form class="prescription-form">
         <div class="form-group">
@@ -190,6 +200,7 @@
                     <label for="instructions">description</label>
                     <textarea id="instructions" name="instructions"></textarea>
                     <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+                    <button type="button" class="annuler-button" onclick="deleteConfirmed(this.parentElement)">Annuler</button>
                 </div>
             </div>
             <div class="divider"></div>
@@ -204,6 +215,7 @@
                     <label for="analyse-instructions">resultat</label>
                     <textarea id="analyse-instructions" name="analyse-instructions"></textarea>
                     <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+                    <button type="button" class="annuler-button" onclick="deleteConfirmed(this.parentElement)">Annuler</button>
                 </div>
             </div>
         </div>
@@ -214,23 +226,31 @@
     </form>
 </div>
 <script>
+    let medicineCache = [];
+
     async function fetchMedicines(input) {
-        const query = input.value;
-        if (query.length < 1) return;
+        if (input.value.length < 1) return;
 
-        const response = await fetch('http://127.0.0.1:5000/medicines');
-        const medicines = await response.json();
+        if (medicineCache.length === 0) {
+            try {
+                const response = await fetch('/medicines');
+                medicineCache = await response.json();
+            } catch (error) {
+                console.error('Error fetching medicines:', error);
+                return;
+            }
+        }
 
+        const query = input.value.toLowerCase();
+        const filteredMedicines = medicineCache.filter(med => med.toLowerCase().includes(query));
         const datalist = document.getElementById('medicine-list');
         datalist.innerHTML = '';
 
-        medicines
-            .filter(med => med.toLowerCase().includes(query.toLowerCase()))
-            .forEach(med => {
-                const option = document.createElement('option');
-                option.value = med;
-                datalist.appendChild(option);
-            });
+        filteredMedicines.forEach(med => {
+            const option = document.createElement('option');
+            option.value = med;
+            datalist.appendChild(option);
+        });
     }
 
     function addMedicament() {
@@ -243,8 +263,11 @@
             <label for="additional-instructions">description</label>
             <textarea name="additional-instructions"></textarea>
             <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+            <button type="button" class="annuler-button" onclick="deleteConfirmed(this.parentElement)">Annuler</button>
         `;
         formGroup.appendChild(newMedicament);
+        updateAnnulerButtons();
+        updateDeleteButtons();
     }
 
     function addAnalyse() {
@@ -257,8 +280,11 @@
             <label for="additional-analyse-instructions">resultat</label>
             <textarea name="additional-analyse-instructions"></textarea>
             <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+            <button type="button" class="annuler-button" onclick="deleteConfirmed(this.parentElement)">Annuler</button>
         `;
         formGroup.appendChild(newAnalyse);
+        updateAnnulerButtons();
+        updateDeleteButtons();
     }
 
     function confirmInput(button) {
@@ -273,20 +299,119 @@
             input.replaceWith(span);
         });
 
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.type = 'button';
+        editButton.className = 'edit-button';
+        editButton.onclick = () => editConfirmed(parentDiv);
+        parentDiv.appendChild(editButton);
+
         const deleteButton = document.createElement('button');
         deleteButton.textContent = '-';
         deleteButton.type = 'button';
         deleteButton.className = 'delete-button';
-        deleteButton.onclick = () => deleteConfirmed(parentDiv);
+        deleteButton.onclick = () => deleteConfirmed(parentDiv, true);
         parentDiv.appendChild(deleteButton);
 
         button.remove();
+        updateAnnulerButtons();
+        updateDeleteButtons();
         checkAllConfirmed();
     }
 
-    function deleteConfirmed(parentDiv) {
-        parentDiv.remove();
+    function editConfirmed(parentDiv) {
+        const spans = parentDiv.querySelectorAll('.confirmed-text');
+        
+        spans.forEach(span => {
+            const text = span.textContent;
+            const inputType = span.classList.contains('textarea') ? 'textarea' : 'input';
+            let input;
+            if (inputType === 'input') {
+                input = document.createElement('input');
+                input.type = 'text';
+            } else {
+                input = document.createElement('textarea');
+            }
+            input.value = text;
+            span.replaceWith(input);
+        });
+
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Confirm';
+        confirmButton.type = 'button';
+        confirmButton.className = 'confirm-button';
+        confirmButton.onclick = () => confirmInput(confirmButton);
+        parentDiv.appendChild(confirmButton);
+
+        parentDiv.querySelector('.edit-button').remove();
+        parentDiv.querySelector('.delete-button').remove();
+
         checkAllConfirmed();
+    }
+
+    function deleteConfirmed(parentDiv, isConfirmed = false) {
+        const formGroup = parentDiv.parentElement;
+        if (isConfirmed && formGroup.querySelectorAll('.confirmed-text').length === 1) {
+            alert('Cannot delete the only confirmed entry.');
+            return;
+        }
+        parentDiv.remove();
+        updateAnnulerButtons();
+        updateDeleteButtons();
+        checkAllConfirmed();
+    }
+
+    function updateAnnulerButtons() {
+        const medicamentGroup = document.getElementById('medicament-group');
+        const analyseGroup = document.getElementById('analyse-group');
+        
+        const medicamentEntries = medicamentGroup.querySelectorAll('.medicament-entry');
+        const analyseEntries = analyseGroup.querySelectorAll('.analyse-entry');
+        
+        medicamentEntries.forEach(entry => {
+            const annulerButton = entry.querySelector('.annuler-button');
+            if (medicamentEntries.length > 1) {
+                annulerButton.style.display = 'inline';
+            } else {
+                annulerButton.style.display = 'none';
+            }
+        });
+
+        analyseEntries.forEach(entry => {
+            const annulerButton = entry.querySelector('.annuler-button');
+            if (analyseEntries.length > 1) {
+                annulerButton.style.display = 'inline';
+            } else {
+                annulerButton.style.display = 'none';
+            }
+        });
+    }
+
+    function updateDeleteButtons() {
+        const medicamentGroup = document.getElementById('medicament-group');
+        const analyseGroup = document.getElementById('analyse-group');
+
+        const confirmedMedicaments = medicamentGroup.querySelectorAll('.medicament-entry .confirmed-text').length;
+        const confirmedAnalyses = analyseGroup.querySelectorAll('.analyse-entry .confirmed-text').length;
+
+        const deleteButtonsMedicament = medicamentGroup.querySelectorAll('.medicament-entry .delete-button');
+        const deleteButtonsAnalyse = analyseGroup.querySelectorAll('.analyse-entry .delete-button');
+
+        deleteButtonsMedicament.forEach(button => {
+            if (confirmedMedicaments > 1) {
+                button.style.display = 'inline';
+            } else {
+                button.style.display = 'none';
+            }
+        });
+
+        deleteButtonsAnalyse.forEach(button => {
+            if (confirmedAnalyses > 1) {
+                button.style.display = 'inline';
+            } else {
+                button.style.display = 'none';
+            }
+        });
     }
 
     function checkAllConfirmed() {
@@ -298,7 +423,13 @@
         const printButton = document.getElementById('print-button');
         printButton.disabled = !(allMedicamentConfirmed && allAnalyseConfirmed);
     }
+
+    // Initial update to handle the default state
+    updateAnnulerButtons();
+    updateDeleteButtons();
 </script>
+
+
 
     <!--<h1>Create new Prescription</h1>
 

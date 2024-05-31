@@ -9,6 +9,10 @@ app_login:
     controller: App\Controller\SecurityController::login
     methods: ['GET', 'POST']
 
+api_medicines:
+    path: /api/medicines
+    controller: App\Controller\ApiController::medicines
+    methods: ['GET']
 # app_home:
 #     path: /
 #     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction

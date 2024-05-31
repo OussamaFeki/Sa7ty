@@ -162,123 +162,143 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container1">
-        <div class="header">
-            <h1>Dr Meg Wallace, MD</h1>
-            <p>1034 North Highland Avenue<br>Murfreesboro, TN 37130</p>
-            <p>Phone: 1615945825 &nbsp;&nbsp;&nbsp; Fax: 6154135079</p>
-            <p>DEA: ________ &nbsp;&nbsp;&nbsp; NPI: ________</p>
-        </div>
-        <form class="prescription-form">
-            <div class="form-group">
-                <label for="patient-name">Patient Name</label>
-                <input type="text" id="patient-name" name="patient-name" list="patients">
-                <datalist id="patients">
-                    <option value="John Doe D.O.B: 1989-08-17"></option>
-                </datalist>
-            </div>
-            <div class="form-actions1">
-                <div class="form-group" id="medicament-group">
-                    <div class="title-wrapper">
-                        <h1>Medicament</h1>
-                        <button type="button" class="plus-button" onclick="addMedicament()">+</button>
-                    </div>
-                    <div class="medicament-entry">
-                        <label for="drug-name">medicine</label>
-                        <input type="text" id="drug-name" name="drug-name">
-                        <label for="instructions">description</label>
-                        <textarea id="instructions" name="instructions"></textarea>
-                        <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
-                    </div>
-                </div>
-                <div class="divider"></div>
-                <div class="form-group" id="analyse-group">
-                    <div class="title-wrapper">
-                        <h1>Analyse</h1>
-                        <button type="button" class="plus-button" onclick="addAnalyse()">+</button>
-                    </div>
-                    <div class="analyse-entry">
-                        <label for="analyse-type">Type</label>
-                        <input type="text" id="analyse-type" name="analyse-type">
-                        <label for="analyse-instructions">resultat</label>
-                        <textarea id="analyse-instructions" name="analyse-instructions"></textarea>
-                        <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
-                    </div>
-                </div>
-            </div>
-            <div class="form-actions">
-                <button type="button" id="print-button" onclick="window.print()" disabled>Print</button>
-                <button type="submit">Fax to Pharmacy</button>
-            </div>
-        </form>
+   <div class="container1">
+    <div class="header">
+        <h1>Dr Meg Wallace, MD</h1>
+        <p>1034 North Highland Avenue<br>Murfreesboro, TN 37130</p>
+        <p>Phone: 1615945825 &nbsp;&nbsp;&nbsp; Fax: 6154135079</p>
+        <p>DEA: ________ &nbsp;&nbsp;&nbsp; NPI: ________</p>
     </div>
-    <script>
-        function addMedicament() {
-            const formGroup = document.getElementById('medicament-group');
-            const newMedicament = document.createElement('div');
-            newMedicament.classList.add('medicament-entry');
-            newMedicament.innerHTML = `
-                <label for="additional-drug-name">medicine</label>
-                <input type="text" name="additional-drug-name">
-                <label for="additional-instructions">description</label>
-                <textarea name="additional-instructions"></textarea>
-                <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
-            `;
-            formGroup.appendChild(newMedicament);
-        }
+    <form class="prescription-form">
+        <div class="form-group">
+            <label for="patient-name">Patient Name</label>
+            <input type="text" id="patient-name" name="patient-name" list="patients">
+            <datalist id="patients">
+                <option value="John Doe D.O.B: 1989-08-17"></option>
+            </datalist>
+        </div>
+        <div class="form-actions1">
+            <div class="form-group" id="medicament-group">
+                <div class="title-wrapper">
+                    <h1>Medicament</h1>
+                    <button type="button" class="plus-button" onclick="addMedicament()">+</button>
+                </div>
+                <div class="medicament-entry">
+                    <label for="drug-name">medicine</label>
+                    <input type="text" id="drug-name" name="drug-name" list="medicine-list" oninput="fetchMedicines(this)">
+                    <datalist id="medicine-list"></datalist>
+                    <label for="instructions">description</label>
+                    <textarea id="instructions" name="instructions"></textarea>
+                    <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <div class="form-group" id="analyse-group">
+                <div class="title-wrapper">
+                    <h1>Analyse</h1>
+                    <button type="button" class="plus-button" onclick="addAnalyse()">+</button>
+                </div>
+                <div class="analyse-entry">
+                    <label for="analyse-type">Type</label>
+                    <input type="text" id="analyse-type" name="analyse-type">
+                    <label for="analyse-instructions">resultat</label>
+                    <textarea id="analyse-instructions" name="analyse-instructions"></textarea>
+                    <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="button" id="print-button" onclick="window.print()" disabled>Print</button>
+            <button type="submit">Fax to Pharmacy</button>
+        </div>
+    </form>
+</div>
+<script>
+    async function fetchMedicines(input) {
+        const query = input.value;
+        if (query.length < 1) return;
 
-        function addAnalyse() {
-            const formGroup = document.getElementById('analyse-group');
-            const newAnalyse = document.createElement('div');
-            newAnalyse.classList.add('analyse-entry');
-            newAnalyse.innerHTML = `
-                <label for="additional-analyse-type">Type</label>
-                <input type="text" name="additional-analyse-type">
-                <label for="additional-analyse-instructions">resultat</label>
-                <textarea name="additional-analyse-instructions"></textarea>
-                <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
-            `;
-            formGroup.appendChild(newAnalyse);
-        }
+        const response = await fetch('http://127.0.0.1:5000/medicines');
+        const medicines = await response.json();
 
-        function confirmInput(button) {
-            const parentDiv = button.parentElement;
-            const inputs = parentDiv.querySelectorAll('input, textarea');
+        const datalist = document.getElementById('medicine-list');
+        datalist.innerHTML = '';
 
-            inputs.forEach(input => {
-                const text = input.value;
-                const span = document.createElement('span');
-                span.textContent = text;
-                span.className = 'confirmed-text';
-                input.replaceWith(span);
+        medicines
+            .filter(med => med.toLowerCase().includes(query.toLowerCase()))
+            .forEach(med => {
+                const option = document.createElement('option');
+                option.value = med;
+                datalist.appendChild(option);
             });
+    }
 
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = '-';
-            deleteButton.type = 'button';
-            deleteButton.className = 'delete-button';
-            deleteButton.onclick = () => deleteConfirmed(parentDiv);
-            parentDiv.appendChild(deleteButton);
+    function addMedicament() {
+        const formGroup = document.getElementById('medicament-group');
+        const newMedicament = document.createElement('div');
+        newMedicament.classList.add('medicament-entry');
+        newMedicament.innerHTML = `
+            <label for="additional-drug-name">medicine</label>
+            <input type="text" name="additional-drug-name" list="medicine-list" oninput="fetchMedicines(this)">
+            <label for="additional-instructions">description</label>
+            <textarea name="additional-instructions"></textarea>
+            <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+        `;
+        formGroup.appendChild(newMedicament);
+    }
 
-            button.remove();
-            checkAllConfirmed();
-        }
+    function addAnalyse() {
+        const formGroup = document.getElementById('analyse-group');
+        const newAnalyse = document.createElement('div');
+        newAnalyse.classList.add('analyse-entry');
+        newAnalyse.innerHTML = `
+            <label for="additional-analyse-type">Type</label>
+            <input type="text" name="additional-analyse-type">
+            <label for="additional-analyse-instructions">resultat</label>
+            <textarea name="additional-analyse-instructions"></textarea>
+            <button type="button" class="confirm-button" onclick="confirmInput(this)">Confirm</button>
+        `;
+        formGroup.appendChild(newAnalyse);
+    }
 
-        function deleteConfirmed(parentDiv) {
-            parentDiv.remove();
-            checkAllConfirmed();
-        }
+    function confirmInput(button) {
+        const parentDiv = button.parentElement;
+        const inputs = parentDiv.querySelectorAll('input, textarea');
 
-        function checkAllConfirmed() {
-            const medicamentGroup = document.getElementById('medicament-group');
-            const analyseGroup = document.getElementById('analyse-group');
-            const allMedicamentConfirmed = medicamentGroup.querySelectorAll('.medicament-entry input, .medicament-entry textarea').length === 0;
-            const allAnalyseConfirmed = analyseGroup.querySelectorAll('.analyse-entry input, .analyse-entry textarea').length === 0;
+        inputs.forEach(input => {
+            const text = input.value;
+            const span = document.createElement('span');
+            span.textContent = text;
+            span.className = 'confirmed-text';
+            input.replaceWith(span);
+        });
 
-            const printButton = document.getElementById('print-button');
-            printButton.disabled = !(allMedicamentConfirmed && allAnalyseConfirmed);
-        }
-    </script>
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '-';
+        deleteButton.type = 'button';
+        deleteButton.className = 'delete-button';
+        deleteButton.onclick = () => deleteConfirmed(parentDiv);
+        parentDiv.appendChild(deleteButton);
+
+        button.remove();
+        checkAllConfirmed();
+    }
+
+    function deleteConfirmed(parentDiv) {
+        parentDiv.remove();
+        checkAllConfirmed();
+    }
+
+    function checkAllConfirmed() {
+        const medicamentGroup = document.getElementById('medicament-group');
+        const analyseGroup = document.getElementById('analyse-group');
+        const allMedicamentConfirmed = medicamentGroup.querySelectorAll('.medicament-entry input, .medicament-entry textarea').length === 0;
+        const allAnalyseConfirmed = analyseGroup.querySelectorAll('.analyse-entry input, .analyse-entry textarea').length === 0;
+
+        const printButton = document.getElementById('print-button');
+        printButton.disabled = !(allMedicamentConfirmed && allAnalyseConfirmed);
+    }
+</script>
 
     <!--<h1>Create new Prescription</h1>
 

@@ -116,76 +116,80 @@
 
 {% block body %}
 {% for doctor in doctors %}
+    <div class="overflow-hidden space">
+        <div class="container">
+            <div class="card">
+                <div class="content">
+                    <div id="desc{{ doctor.id }}" class="desc">
+                        <h4>{{ doctor.getUser.getFullName }}</h4>
+                        <h6>{{ doctor.specialty }}</h6>
+                    </div>
+                    <div id="calond{{ doctor.id }}" class="calond">
+                        <table>
+                            <thead>
+                                <tr>
+                                    {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                                        {% set availability = doctor.getAvailability %}
+                                        {% if availability is not null %}
+                                            {% set startHour = attribute(availability, 'get' ~ day ~ 'StartHour') %}
+                                            {% set endHour = attribute(availability, 'get' ~ day ~ 'EndHour') %}
+                                            {% if startHour and endHour %}
+                                                <th>{{ day }}</th>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% set maxIntervals = 0 %}
+                                {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                                    {% set availability = doctor.getAvailability %}
+                                    {% if availability is not null %}
+                                        {% set startHour = attribute(availability, 'get' ~ day ~ 'StartHour') %}
+                                        {% set endHour = attribute(availability, 'get' ~ day ~ 'EndHour') %}
+                                        {% if startHour and endHour %}
+                                            {% set intervals = (endHour.timestamp - startHour.timestamp) / (availability.consultationDuration * 60) %}
+                                            {% set maxIntervals = max(maxIntervals, intervals) %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for i in 0..maxIntervals %}
+                                    <tr class="{{ i >= 3 ? 'extra-rows' : '' }}" style="{{ i >= 3 ? 'display: none;' : '' }}">
+                                        {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                                            {% set availability = doctor.getAvailability %}
+                                            {% if availability is not null %}
+                                                {% set startHour = attribute(availability, 'get' ~ day ~ 'StartHour') %}
+                                                {% set endHour = attribute(availability, 'get' ~ day ~ 'EndHour') %}
+                                                {% if startHour and endHour %}
+                                                    {% set StartConsultation = startHour|date_modify('+' ~ i * availability.consultationDuration ~ ' minutes') %}
+                                                    {% set EndConsultation = StartConsultation|date_modify('+' ~ availability.consultationDuration ~ ' minutes') %}
+                                                    {% set date_timestamp = StartConsultation|date('U') %}
+                                                    {% if StartConsultation <= endHour and EndConsultation <= endHour %}
+                                                        <td>
+                                                            {{ StartConsultation|date('H:i') }} - {{ EndConsultation|date('H:i') }}
+                                                            <br>
+                                                            <a href="{{ path('app_appointment_book_now', {'doctorId': doctor.id, 'dateTimeStamp': date_timestamp, 'startAt': StartConsultation|date('U')}) }}" class="btn-sm btn-book">Book</a>
+                                                        </td>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
 
-	<div class="overflow-hidden space">
-		<div class="container">
-
-			<div class="card">
-				<div class="content">
-					<div id="desc{{ doctor.id }}" class="desc">
-						<h4>{{ doctor.getUser.getFullName }}</h4>
-						<h6>{{ doctor.specialty }}</h6>
-					</div>
-					<div id="calond{{ doctor.id }}" class="calond">
-						<table>
-							<thead>
-								<tr>
-									{% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-										{% set startHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'StartHour') %}
-										{% set endHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'EndHour') %}
-										{% if startHour and endHour %}
-											<th>{{ day }}</th>
-										{% endif %}
-									{% endfor %}
-								</tr>
-							</thead>
-							<tbody>
-								{% set maxIntervals = 0 %}
-								{% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-									{% set startHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'StartHour') %}
-									{% set endHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'EndHour') %}
-									{% if startHour and endHour %}
-										{% set intervals = (endHour.timestamp - startHour.timestamp) / (doctor.getAvailability.consultationDuration * 60) %}
-										{% set maxIntervals = max(maxIntervals, intervals) %}
-									{% endif %}
-								{% endfor %}
-								{% for i in 0..maxIntervals %}
-									<tr class="{{ i >= 3 ? 'extra-rows' : '' }}" style="{{ i >= 3 ? 'display: none;' : '' }}">
-										{% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-											{% set startHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'StartHour') %}
-											{% set endHour = attribute(doctor.getAvailability, 'get' ~ day ~ 'EndHour') %}
-											{% if startHour and endHour %}
-												{% set StartConsultation = startHour|date_modify('+' ~ i * doctor.getAvailability.consultationDuration ~ ' minutes') %}
-												{% set EndConsultation = StartConsultation|date_modify('+' ~ doctor.getAvailability.consultationDuration ~ ' minutes') %}
-												{% set date_timestamp = StartConsultation|date('U') %} <!-- Define the timestamp here -->
-
-												{% if StartConsultation <= endHour and EndConsultation <= endHour %}
-													<td>
-														{{ StartConsultation|date('H:i') }} - {{ EndConsultation|date('H:i') }}
-														<br>
-														<a href="{{ path('app_appointment_book_now', {'doctorId': doctor.id, 'dateTimeStamp': date_timestamp, 'startAt': StartConsultation|date('U')}) }}" class="btn-sm btn-book">Book</a>
-													</td>
-												{% endif %}
-											{% endif %}
-										{% endfor %}
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-
-						<div id="more{{ doctor.id }}" class="more">
-							<button class="th-btn read-more-btn" data-card="{{ doctor.id }}">See More Times</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		{% endfor %}
-
-
-</div>
-
-</div>
+                        <div id="more{{ doctor.id }}" class="more">
+                            <button class="th-btn read-more-btn" data-card="{{ doctor.id }}">See More Times</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 {% endblock %}
+
 
 {% block addJavascript %}
 <script>
